@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login to Age Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to left, #1c2220, #a4b6c7);
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .container, .login-container {
+      background-color: rgba(252, 234, 234, 0.5);
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4);
+      border: 5px solid #070707;
+      transition: 0.3s ease-in-out;
+    }
+
+    .container:hover, .login-container:hover {
+      transform: scale(1.02);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 25px;
+      color: #eb0707;
+      text-shadow: 1px 1px 5px rgb(255, 248, 248);
+    }
+
+    label {
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    input[type="date"],
+    input[type="text"],
+    input[type="password"] {
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #0c0c0c;
+      width: 70%;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    input:focus {
+      border-color: #ffd700;
+      box-shadow: 0 0 10px #ffd700;
+    }
+
+    .btns {
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px 30px;
+      font-size: 16px;
+      margin: 10px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .calc {
+      background-color: #ffc107;
+      color: #000;
+      border-color: #ffc107;
+    }
+
+    .calc:hover {
+      background-color: #fff8dc;
+      color: #000;
+      border-color: #ffd700;
+      transform: scale(1.05);
+    }
+
+    .reset {
+      background-color: #dc3545;
+      color: #fff;
+      border-color: #dc3545;
+    }
+
+    .reset:hover {
+      background-color: #fff;
+      color: #dc3545;
+      border-color: #ff4d6d;
+      transform: scale(1.05);
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 18px;
+      text-align: left;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #00ffc3;
+      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    #result span {
+      color: #0f0f0f;
+      font-weight: bold;
+    }
+
+    #error {
+      color: yellow;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div class="login-container" id="loginSection">
+    <h1>🔐 Login</h1>
+    <label for="username">Enter Your Name:</label>
+    <input type="text" id="username" placeholder="Your Name" required>
+
+    <label for="password">Enter Password:</label>
+    <input type="password" id="password" placeholder="Password" required>
+
+    <div class="btns">
+      <button class="calc" onclick="login()">Login</button>
+    </div>
+
+    <div id="error"></div>
+  </div>
+
+  <!-- Age Calculator Section -->
+  <div class="container" id="calculatorSection" style="display: none;">
+    <h1>🎉 Age Calculator</h1>
+    <label for="dob">Select Your Date of Birth:</label>
+    <input type="date" id="dob">
+
+    <div class="btns">
+      <button class="calc" onclick="calculateAge()">Calculate</button>
+      <button class="reset" onclick="resetFields()">Reset</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+<script>
+  // Set max date to today
+  document.getElementById("dob").max = new Date().toISOString().split("T")[0];
+
+  function login() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value;
+    const error = document.getElementById("error");
+
+    if (!user || !pass) {
+      error.textContent = "⚠️ Please enter both name and password.";
+      return;
+    }
+
+    if (pass === "heyrb") {
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("calculatorSection").style.display = "block";
+    } else {
+      error.textContent = "❌ Incorrect password. Try again.";
+    }
+  }
+
+  function calculateAge() {
+    const dobInput = document.getElementById("dob").value;
+    const result = document.getElementById("result");
+    result.innerHTML = "";
+
+    if (!dobInput) {
+      result.innerHTML = "⚠️ Please select your date of birth.";
+      return;
+    }
+
+    const dob = new Date(dobInput);
+    const today = new Date();
+
+    if (dob > today) {
+      result.innerHTML = "⚠️ Date of birth cannot be in the future.";
+      return;
+    }
+
+    let ageYears = today.getFullYear() - dob.getFullYear();
+    let ageMonths = today.getMonth() - dob.getMonth();
+    let ageDays = today.getDate() - dob.getDate();
+
+    if (ageDays < 0) {
+      ageMonths--;
+      ageDays += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+    }
+
+    if (ageMonths < 0) {
+      ageYears--;
+      ageMonths += 12;
+    }
+
+    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const bornDay = weekdays[dob.getDay()];
+
+    let nextBirthday = new Date(today.getFullYear(), dob.getMonth(), dob.getDate());
+    if (nextBirthday < today) {
+      nextBirthday.setFullYear(today.getFullYear() + 1);
+    }
+
+    const diffTime = nextBirthday - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    result.innerHTML = `
+      <p>You are <span>${ageYears}</span> years, <span>${ageMonths}</span> months, and <span>${ageDays}</span> days old.</p>
+      <p>You were born on a <span>${bornDay}</span>.</p>
+      <p>🎂 Your next birthday is in <span>${diffDays}</span> day(s)!</p>
+    `;
+  }
+
+  function resetFields() {
+    document.getElementById("dob").value = "";
+    document.getElementById("result").innerHTML = "";
+  }
+</script>
+
+</body>
+</html>
